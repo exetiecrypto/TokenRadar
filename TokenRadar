@@ -1,0 +1,42 @@
+# scripts/token_query.py
+
+from web3 import Web3
+
+def connect_to_blockchain(provider_url):
+    """
+    Connect to the Ethereum blockchain.
+
+    :param provider_url: URL of the Ethereum provider
+    :return: Web3 instance
+    """
+    web3 = Web3(Web3.HTTPProvider(provider_url))
+    if not web3.isConnected():
+        raise ConnectionError("Failed to connect to the Ethereum provider")
+    return web3
+
+def get_token_balance(web3, token_address, account_address, token_abi):
+    """
+    Get the balance of a specific token for an account.
+
+    :param web3: Web3 instance
+    :param token_address: Address of the token contract
+    :param account_address: Address of the account
+    :param token_abi: ABI of the token contract
+    :return: Token balance
+    """
+    token_contract = web3.eth.contract(address=token_address, abi=token_abi)
+    balance = token_contract.functions.balanceOf(account_address).call()
+    return balance / 10**18  # Convert from Wei to ETH
+
+def get_total_supply(web3, token_address, token_abi):
+    """
+    Get the total supply of a specific token.
+
+    :param web3: Web3 instance
+    :param token_address: Address of the token contract
+    :param token_abi: ABI of the token contract
+    :return: Total supply of the token
+    """
+    token_contract = web3.eth.contract(address=token_address, abi=token_abi)
+    total_supply = token_contract.functions.totalSupply().call()
+    return total_supply / 10**18  # Convert from Wei to ETH
